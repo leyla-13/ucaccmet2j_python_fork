@@ -1,22 +1,30 @@
-# importing packages
+# this was as far as i was able to get for this assignment
+## i was also able to calculate yearly precipitation for seattle for the third part 
+
 import json
 
 #opening data file with JSON
+
+
 with open ('precipitation.json') as file:
     data = json.load(file)
 
 # filtering for data from the seattle station
 
 city_dat = [] # empty list to store seattle data
+
 for entry in data:
+
     if entry['station'] == 'GHCND:US1WAKG0038':
         city_dat.append(entry) # filling the list with all the seattle data
+
 
 
 # # Calculate the total_monthly_precipitation: a list with the total precipitation per month,
 # for that location
 
 total_monthly_precipitation = {} #creating an empty list to store month key and precipitation sum output
+
 
 for entry in city_dat:
     grouping = entry['date'].split('-') #splitting from "-" so i can isolate the month, date is now a list of strings
@@ -31,7 +39,10 @@ print(f'monthly precipitation sum is {total_monthly_precipitation}') #printing t
 total_monthly_precipitation_list = (list(total_monthly_precipitation.values())) #converting the dictionary to a list
 
 
+
+
 # # calculating yearly precipitation
+
 
 total_year_precipitation = {} #creating an empty list to store month key and precipitation sum output
 
@@ -47,17 +58,49 @@ print(f'this is the total years precipitation: {total_year_precipitation}') #pri
 
 total_year_precipitation_list = (list(total_year_precipitation.values())) #converting the dictionary to a list
 
+
+
+
 # calculating relative monthly precipitation
+
 
 relative_monthly = {}
 
-for month in total_monthly_precipitation:
+for month in total_monthly_precipitation: # i call the month data from the dictionary
+                                        # then make it associate the months per this calculation to get relative per 
+                                        # month, then pulled the value for 2010 for seattle and divided it by it per month
     relative_monthly[month] = total_monthly_precipitation[month] / total_year_precipitation['2010']
 
 print(f'this is the relative monthly precipitation {relative_monthly}')
 
 relative_monthly_precipitation_list = (list(relative_monthly.values())) #converting the dictionary to a list
-print(relative_monthly_precipitation_list)
+
+
+
+
+# calculating relative yearly precipitation
+
+# first pull year data from all data
+overall_total_yearly = {}
+
+for entry in data:
+   all_yeargroup = entry['date'].split('-') #i am now takin data from all stations, not just seattle
+   all_year = all_yeargroup[0]                 # taking the index 0 (so 1st in list) item from the list
+   if all_year not in overall_total_yearly:   #adding year to the dict. if i thasnt been recognized already
+       overall_total_yearly[all_year] = 0
+   overall_total_yearly[all_year] +=  entry['value'] 
+
+print
+relative_yearly = {}
+
+#then i calculate relative yearly
+for all_year in overall_total_yearly:
+   relative_yearly[year] = total_year_precipitation[year] / overall_total_yearly['2010']
+
+print(f'this is the relative yearly precipitation: {relative_yearly}')
+
+
+
 
 #storing data into the result JSON file
 part1dat = {
@@ -83,7 +126,7 @@ part1dat = {
         "total_monthly_precipitation": [1693, 730, 870, 752, 924, 601, 54, 104, 996, 908, 1192, 2356],
         "total_yearly_precipitation": [11180],
         "relative_monthly_precipitation": [0.15143112701252237, 0.06529516994633273, 0.0778175313059034, 0.06726296958855098, 0.08264758497316636, 0.053756708407871195, 0.00483005366726297, 0.009302325581395349, 0.089087656529517, 0.081216457960644, 0.10661896243291592, 0.2107334525939177],
-        "relative_yearly_precipitation": []
+        "relative_yearly_precipitation": [0.3560736352633926]
         }
 
     }
@@ -91,9 +134,4 @@ part1dat = {
 with open('results.json', 'w', encoding='utf-8') as file:
     json.dump(part1dat, file, indent=4)
 
-print(total_monthly_precipitation_list)
-print(total_year_precipitation)
-print(total_monthly_precipitation_list/ string_yearly)
-
-print (month)
 
